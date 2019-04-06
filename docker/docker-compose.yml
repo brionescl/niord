@@ -1,0 +1,56 @@
+#This file is inside a folder named 'dock' at the root of my laravel project
+version: "3.1"
+services:
+    #PHP with apache
+    httpd:
+      container_name: niord-httpd
+      #image will be built by processing the Dockerfile in this path
+      image: php7-apache:latest
+      links:
+        - db:db
+      #map ports between host and the service
+      ports:
+        - 80:80
+        - 1080:1080
+      #map host folders (relative to this file) to service
+      volumes:
+        - ../public/:/var/www/html
+        - ../:/var/www
+      expose:
+        - "80"
+      #mark the db services as a dependency
+      depends_on:
+        [db]
+      #give an alias to this, to refer to it without knowing ip
+      networks:
+        report:
+          aliases:
+            - web
+    #mysql db
+    db:
+      container_name: niord-db
+      image: mysql:5.7
+      command: mysqld --default-authentication-plugin=mysql_native_password
+      restart: always
+      #storing the mysql folder outside allows persistence
+      #of databases between executions 
+      volumes:
+        - ./db/:/var/lib/mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: niord
+        MYSQL_USER: niord
+        MYSQL_PASSWORD: niord
+      ports:
+        - 3306:3306
+      expose:
+        - "3306"
+      networks:
+        report:
+          aliases:
+            - database
+volumes:
+    db_data:
+networks:
+  report:
+    driver: bridge
