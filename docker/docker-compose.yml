@@ -14,8 +14,8 @@ services:
         - 1080:1080
       #map host folders (relative to this file) to service
       volumes:
-        - ../public/:/var/www/html
-        - ../:/var/www
+        - ../public/:/var/www/html:delegated
+        - ../:/var/www:delegated
       expose:
         - "80"
       #mark the db services as a dependency
@@ -33,9 +33,9 @@ services:
       command: mysqld --default-authentication-plugin=mysql_native_password
       restart: always
       #storing the mysql folder outside allows persistence
-      #of databases between executions 
+      #of databases between executions
       volumes:
-        - ./db/:/var/lib/mysql
+        - ./db/:/var/lib/mysql:delegated
       environment:
         MYSQL_ROOT_PASSWORD: root
         MYSQL_DATABASE: niord
