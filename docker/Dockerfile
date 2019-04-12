@@ -27,7 +27,7 @@ RUN    pecl install mcrypt-1.0.1 \
 RUN    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd
 
-# Copy the configuration file into xdebug, if running phpinfo() you see the loaded file is not this one, change the path accordingly. 
+# Copy the configuration file into xdebug, if running phpinfo() you see the loaded file is not this one, change the path accordingly.
 COPY xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # install composer
@@ -37,8 +37,5 @@ RUN curl --silent --show-error https://getcomposer.org/installer | php -- --inst
 RUN apt-get update -yqq && apt-get install -y gnupg build-essential
 RUN curl --silent --location https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get install -y nodejs
-
-# install yarn
-RUN npm install yarn -g
 
 WORKDIR /var/www

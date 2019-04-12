@@ -1,7 +1,8 @@
 /docker/db/*
 /node_modules
-/public/hot
-/public/storage
+/public/js/*
+/public/css/*
+/public/mix-manifest.json
 /storage/*.key
 /vendor
 .env
