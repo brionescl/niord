@@ -16,15 +16,13 @@ class CurrenciesTableSeeder extends Seeder
             [
                 'name' => 'Pesos',
                 'code' => 'CLP',
-                'symbol' => '$',
-                'decimals' => 0,
+                'locale' => 'es-CL',
                 'created_at' => Carbon::now()
             ],
             [
                 'name' => 'Dollars',
                 'code' => 'USD',
-                'symbol' => '$',
-                'decimals' => 2,
+                'locale' => 'en-US',
                 'created_at' => Carbon::now()
             ],
         ]);

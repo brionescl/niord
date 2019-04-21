@@ -1,20 +1,20 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">Expenses</div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <expense-item
-                            v-for="(expense, index) in expenses"
-                            :key="expense.id"
-                            :expense="expense"
-                            @update="updateExpense(index, ...arguments)"
-                            @delete="deleteExpense(index)"
-                        >
-                        </expense-item>
-                    </ul>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <h4 class="mb-3">Expenses</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <expense-item
+                    v-for="(expense, index) in expenses"
+                    :key="expense.id"
+                    :expense="expense"
+                    @update="updateExpense(index, ...arguments)"
+                    @delete="deleteExpense(index)"
+                >
+                </expense-item>
             </div>
         </div>
     </div>

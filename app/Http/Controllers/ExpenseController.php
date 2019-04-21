@@ -24,7 +24,11 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        return Expense::where('user_id', auth()->id())->get();
+        return Expense::where('user_id', auth()->id())
+            ->with('user')
+            ->with('category')
+            ->with('currency')
+            ->get();
     }
 
     /**

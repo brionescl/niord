@@ -17,8 +17,7 @@ class CreateCurrenciesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 20)->unique();
             $table->string('code', 10)->unique();
-            $table->string('symbol', 10);
-            $table->unsignedInteger('decimals')->default(0);
+            $table->string('locale', 10);
             $table->timestamps();
         });
     }

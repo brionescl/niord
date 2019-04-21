@@ -18,7 +18,25 @@ window.Vue = require('vue');
  */
 
 const files = require.context('./', true, /\.vue$/i);
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+files.keys().map(
+    key => Vue.component(
+        key.split('/').pop().split('.')[0], files(key).default
+    )
+);
+
+import moment from 'moment';
+
+Vue.filter('formatDate', function(value, format) {
+    if (value) {
+        return moment(String(value)).format(format);
+    }
+});
+
+Vue.filter('formatCurrency', function(number, code, locale) {
+    if (number) {
+        return Intl.NumberFormat(locale, {style: 'currency', currency: code}).format(number);
+    }
+});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
