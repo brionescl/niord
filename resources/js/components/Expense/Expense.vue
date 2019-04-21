@@ -7,6 +7,7 @@
         </div>
         <div class="row">
             <div class="col">
+                <base-loading v-show="isLoading"></base-loading>
                 <expense-item
                     v-for="(expense, index) in expenses"
                     :key="expense.id"
@@ -24,12 +25,14 @@
     export default {
         data() {
             return {
-                expenses: []
+                expenses: [],
+                isLoading: true
             }
         },
         mounted() {
             axios.get('/expenses').then((response) => {
                 this.expenses = response.data;
+                this.isLoading = false;
             });
         },
         methods: {
