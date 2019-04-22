@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid">
-        <div class="row">
+        <div class="row sticky-top">
             <div class="col">
-                <h4 class="mb-3">Expenses</h4>
+                <h4 class="mt-2 mb-2">Expenses</h4>
             </div>
         </div>
         <div class="row">
@@ -18,6 +18,7 @@
                 </expense-item>
             </div>
         </div>
+        <expense-add-button></expense-add-button>
     </div>
 </template>
 
@@ -48,3 +49,10 @@
         }
     }
 </script>
+
+<style>
+    .sticky-top {
+        background-color: #f8fafc;
+        top: 3.5em;
+    }
+</style>
