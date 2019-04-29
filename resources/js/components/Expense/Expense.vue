@@ -7,18 +7,29 @@
         </div>
         <div class="row">
             <div class="col">
-                <base-loading v-show="isLoading"></base-loading>
+                <base-loading v-show="isLoadingExpenses"></base-loading>
                 <expense-item
-                    v-for="(expense, index) in expenses"
+                    v-show="!isLoadingExpenses"
+                    v-for="expense in expenses"
                     :key="expense.id"
                     :expense="expense"
-                    @update="updateExpense(index, ...arguments)"
-                    @delete="deleteExpense(index)"
+                    @editExpense="editExpense(...arguments)"
                 >
                 </expense-item>
             </div>
         </div>
-        <expense-add-button></expense-add-button>
+        <div id="newExpenseButton" v-show="!isLoadingExpenses">
+            <button class="btn btn-primary font-weight-bold" v-on:click="newExpense">
+                <svg id="i-plus" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+                    <path d="M16 2 L16 30 M2 16 L30 16" />
+                </svg>
+            </button>
+        </div>
+        <expense-form
+            ref="expenseForm"
+            :expense="expense"
+        >
+        </expense-form>
     </div>
 </template>
 
@@ -26,25 +37,29 @@
     export default {
         data() {
             return {
+                expense: {},
                 expenses: [],
-                isLoading: true
+                isLoadingExpenses: true
             }
         },
         mounted() {
             axios.get('/expenses').then((response) => {
-                this.expenses = response.data;
-                this.isLoading = false;
+                this.expenses = response.data
+                this.isLoadingExpenses = false
             });
         },
         methods: {
-            addExpense(expense) {
-                this.expenses.push(expense);
+            showExpenseForm() {
+                let expenseForm = this.$refs.expenseForm.$el
+                $(expenseForm).modal('show')
             },
-            updateExpense(index, expense) {
-                this.expenses[index] = expense;
+            newExpense() {
+                this.expense = {}
+                this.showExpenseForm()
             },
-            deleteExpense(index) {
-                this.expenses.splice(index, 1);
+            editExpense(expense) {
+                this.expense = expense
+                this.showExpenseForm()
             }
         }
     }
@@ -54,5 +69,15 @@
     .sticky-top {
         background-color: #f8fafc;
         top: 3.5em;
+    }
+    #newExpenseButton {
+        position: fixed;
+        bottom: 10px;
+        right: 30px;
+    }
+    #newExpenseButton button {
+        height: 60px;
+        width: 60px;
+        border-radius: 50%;
     }
 </style>

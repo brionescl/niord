@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid mt-3">
     <div class="row">
         <div class="col">
             <h4 class="mb-3">{{ __('Login') }}</h4>

@@ -13,6 +13,12 @@
     </div>
 </template>
 
+<script>
+export default {
+
+}
+</script>
+
 <style>
 .sk-folding-cube {
     margin: 20px auto;

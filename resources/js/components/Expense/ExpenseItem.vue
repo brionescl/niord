@@ -1,13 +1,13 @@
 <template>
     <div class="container mb-2 bg-white">
         <div class="row">
-            <div class="category" v-bind:style="style">
+            <div class="category" :style="categoryStyle">
                 &nbsp;
             </div>
             <div class="col pl-2 pr-0">
                 <div class="container pl-0 pr-2">
-                    <div class="row">
-                        <div class="col">{{ expense.description }} {{ expense.category.color_hex }}</div>
+                    <div class="row" v-on:click="editExpense">
+                        <div class="col">{{ expense.description }}</div>
                         <div class="w-100"></div>
                         <div class="col-6">
                             <small>
@@ -28,10 +28,15 @@
     export default {
         props: ['expense'],
         computed: {
-            style: function() {
+            categoryStyle() {
                 return {
                     'background-color': '#' + this.expense.category.color_hex
                 }
+            }
+        },
+        methods: {
+            editExpense() {
+                this.$emit('editExpense', this.expense);
             }
         }
     }
