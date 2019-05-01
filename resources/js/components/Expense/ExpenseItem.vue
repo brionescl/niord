@@ -15,7 +15,7 @@
                             </small>
                         </div>
                         <div class="amount col-6 text-right font-weight-bold">
-                            {{ expense.amount | formatCurrency(expense.currency.code, expense.currency.locale) }}
+                            {{ expense.amount | formatCurrency(formatCurrencyOptions) }}
                         </div>
                     </div>
                 </div>
@@ -26,17 +26,29 @@
 
 <script>
     export default {
-        props: ['expense'],
+        props: [
+            'categories',
+            'currencies',
+            'expense'
+        ],
         computed: {
             categoryStyle() {
+                const category = this.categories.find(category => category.id === this.expense.category_id)
                 return {
-                    'background-color': '#' + this.expense.category.color_hex
+                    'background-color': '#' + category.color_hex
+                }
+            },
+            formatCurrencyOptions() {
+                const currency = this.currencies.find(currency => currency.id === this.expense.currency_id)
+                return {
+                    locale: currency.locale,
+                    code: currency.code
                 }
             }
         },
         methods: {
             editExpense() {
-                this.$emit('editExpense', this.expense);
+                this.$emit('editExpense', this.expense)
             }
         }
     }

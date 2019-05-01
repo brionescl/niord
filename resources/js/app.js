@@ -32,9 +32,15 @@ Vue.filter('formatDate', function(value, format) {
     }
 });
 
-Vue.filter('formatCurrency', function(number, code, locale) {
-    if (number) {
-        return Intl.NumberFormat(locale, {style: 'currency', currency: code}).format(number);
+Vue.filter('formatCurrency', function(number, options) {
+    if (number && options) {
+        return Intl.NumberFormat(
+            options.locale,
+            {
+                style: 'currency',
+                currency: options.code
+            }
+        ).format(number);
     }
 });
 

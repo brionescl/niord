@@ -20,3 +20,5 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::apiResource('expenses', 'ExpenseController');
+Route::apiResource('categories', 'CategoryController');
+Route::apiResource('currencies', 'CurrencyController');

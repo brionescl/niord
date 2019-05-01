@@ -13,6 +13,8 @@
                     v-for="expense in expenses"
                     :key="expense.id"
                     :expense="expense"
+                    :categories="categories"
+                    :currencies="currencies"
                     @editExpense="editExpense(...arguments)"
                 >
                 </expense-item>
@@ -28,6 +30,8 @@
         <expense-form
             ref="expenseForm"
             :expense="expense"
+            :categories="categories"
+            :currencies="currencies"
         >
         </expense-form>
     </div>
@@ -37,24 +41,42 @@
     export default {
         data() {
             return {
-                expense: {},
+                categories: [],
+                currencies: [],
                 expenses: [],
+                expense: {
+                    user_id: null,
+                    category_id: null,
+                    currency_id: null,
+                    description: '',
+                    amount: 0
+                },
                 isLoadingExpenses: true
             }
         },
         mounted() {
-            axios.get('/expenses').then((response) => {
-                this.expenses = response.data
-                this.isLoadingExpenses = false
+            const self = this
+            Promise.all([
+                axios.get('/categories'),
+                axios.get('/currencies'),
+                axios.get('/expenses')
+            ]).then(function ([categories, currencies, expenses]) {
+                self.categories = categories.data
+                self.currencies = currencies.data
+                self.expenses = expenses.data
+                self.isLoadingExpenses = false
             });
         },
         methods: {
             showExpenseForm() {
-                let expenseForm = this.$refs.expenseForm.$el
+                const expenseForm = this.$refs.expenseForm.$el
                 $(expenseForm).modal('show')
             },
             newExpense() {
-                this.expense = {}
+                this.expense = {
+                    category_id: this.categories[0].id,
+                    currency_id: this.currencies[0].id
+                }
                 this.showExpenseForm()
             },
             editExpense(expense) {
