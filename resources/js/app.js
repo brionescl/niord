@@ -25,6 +25,9 @@ files.keys().map(
 )
 
 import moment from 'moment'
+import snotify from 'vue-snotify'
+
+Vue.use(snotify)
 
 Vue.filter('formatDate', function(value, format) {
     if (value) {

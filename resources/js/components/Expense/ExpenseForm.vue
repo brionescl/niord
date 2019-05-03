@@ -76,9 +76,10 @@
                     </div>
                     <div class="modal-footer">
                         <button v-show="editMode" type="button" class="btn btn-danger" v-on:click="deleteExpense">
-                            <svg id="i-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <svg id="i-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" v-show="!isDeleting">
                                 <path d="M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6" />
                             </svg>
+                            <span v-show="isDeleting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         </button>
                         <button type="submit" class="btn btn-primary">
                             <span v-if="editMode" v-show="!isSubmitting">Save changes</span>
@@ -96,7 +97,8 @@
 export default {
     data() {
         return {
-            isSubmitting: false
+            isSubmitting: false,
+            isDeleting: false
         }
     },
     props: [
@@ -141,20 +143,24 @@ export default {
             this.isSubmitting = true
 
             if (this.editMode) {
-                return this.putExpense(params)
+                this.putExpense(params)
+                return
             }
 
-            return this.postExpense(params)
+            this.postExpense(params)
+            return
         },
         putExpense(params) {
             const self = this
+
             axios
                 .put(`/expenses/${self.expense.id}`, params)
                 .then(response => {
                     self.$emit('updateExpenseItem', response.data)
+                    self.$snotify.success('Expense modified');
                 })
                 .catch(error => {
-                    alert(`Error: ${error.response.status} - ${error.response.statusText}`)
+                    self.$snotify.error(error.response.statusText, `Error ${error.response.status}`);
                 })
                 .then(function () {
                     self.isSubmitting = false
@@ -162,29 +168,39 @@ export default {
         },
         postExpense(params) {
             const self = this
+
             axios
                 .post('/expenses', params)
                 .then(response => {
                     self.$emit('addExpenseItem', response.data)
+                    self.$snotify.success('Expense added');
                 })
                 .catch(error => {
-                    alert(`Error: ${error.response.status} - ${error.response.statusText}`)
+                    self.$snotify.error(error.response.statusText, `Error ${error.response.status}`);
                 })
                 .then(function () {
                     self.isSubmitting = false
                 })
         },
         deleteExpense() {
+            const self = this
+            self.isDeleting = true
+
             if (confirm('Are you sure you want to delete?')) {
-                const self = this
                 axios
                     .delete(`/expenses/${self.expense.id}`)
                     .then(response => {
                         self.$emit('deleteExpenseItem', self.expense)
+                        self.$snotify.success('Expense deleted');
                     })
                     .catch(error => {
-                        alert(`Error: ${error.response.status} - ${error.response.statusText}`)
+                        self.$snotify.error(error.response.statusText, `Error ${error.response.status}`);
                     })
+                    .then(function () {
+                        self.isDeleting = false
+                    })
+            } else {
+                self.isDeleting = false
             }
         }
     }
