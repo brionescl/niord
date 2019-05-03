@@ -35,7 +35,7 @@
             categoryStyle() {
                 const category = this.categories.find(category => category.id === this.expense.category_id)
                 return {
-                    'background-color': '#' + category.color_hex
+                    'background-color': `#${category.color_hex}`
                 }
             },
             formatCurrencyOptions() {

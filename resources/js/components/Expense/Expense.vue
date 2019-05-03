@@ -15,7 +15,7 @@
                     :expense="expense"
                     :categories="categories"
                     :currencies="currencies"
-                    @editExpense="editExpense(...arguments)"
+                    @editExpense="editExpense"
                 >
                 </expense-item>
             </div>
@@ -32,6 +32,10 @@
             :expense="expense"
             :categories="categories"
             :currencies="currencies"
+            :editMode="expenseFormEditMode"
+            @addExpenseItem="addExpenseItem"
+            @updateExpenseItem="updateExpenseItem"
+            @deleteExpenseItem="deleteExpenseItem"
         >
         </expense-form>
     </div>
@@ -51,7 +55,8 @@
                     description: '',
                     amount: 0
                 },
-                isLoadingExpenses: true
+                isLoadingExpenses: true,
+                expenseFormEditMode: false
             }
         },
         mounted() {
@@ -65,23 +70,47 @@
                 self.currencies = currencies.data
                 self.expenses = expenses.data
                 self.isLoadingExpenses = false
-            });
+            })
         },
         methods: {
             showExpenseForm() {
-                const expenseForm = this.$refs.expenseForm.$el
-                $(expenseForm).modal('show')
+                $(this.$refs.expenseForm.$el).modal('show')
+            },
+            hideExpenseForm() {
+                $(this.$refs.expenseForm.$el).modal('hide')
             },
             newExpense() {
                 this.expense = {
                     category_id: this.categories[0].id,
                     currency_id: this.currencies[0].id
                 }
+                this.expenseFormEditMode = false
                 this.showExpenseForm()
             },
             editExpense(expense) {
                 this.expense = expense
+                this.expenseFormEditMode = true
                 this.showExpenseForm()
+            },
+            addExpenseItem(expense) {
+                this.expenses.push(expense)
+                this.hideExpenseForm()
+            },
+            updateExpenseItem(expense) {
+                const index = this.expenses.findIndex(e => e.id === expense.id)
+
+                if (index != -1) {
+                    this.expenses[index] = expense
+                    this.hideExpenseForm()
+                }
+            },
+            deleteExpenseItem(expense) {
+                const index = this.expenses.findIndex(e => e.id === expense.id)
+
+                if (index != -1) {
+                    this.expenses.splice(index, 1)
+                    this.hideExpenseForm()
+                }
             }
         }
     }

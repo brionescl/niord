@@ -5,9 +5,9 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+require('./bootstrap')
 
-window.Vue = require('vue');
+window.Vue = require('vue')
 
 /**
  * The following block of code may be used to automatically register your
@@ -17,20 +17,20 @@ window.Vue = require('vue');
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-const files = require.context('./', true, /\.vue$/i);
+const files = require.context('./', true, /\.vue$/i)
 files.keys().map(
     key => Vue.component(
         key.split('/').pop().split('.')[0], files(key).default
     )
-);
+)
 
-import moment from 'moment';
+import moment from 'moment'
 
 Vue.filter('formatDate', function(value, format) {
     if (value) {
-        return moment(String(value)).format(format);
+        return moment(String(value)).format(format)
     }
-});
+})
 
 Vue.filter('formatCurrency', function(number, options) {
     if (number && options) {
@@ -40,9 +40,9 @@ Vue.filter('formatCurrency', function(number, options) {
                 style: 'currency',
                 currency: options.code
             }
-        ).format(number);
+        ).format(number)
     }
-});
+})
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -52,4 +52,4 @@ Vue.filter('formatCurrency', function(number, options) {
 
 const app = new Vue({
     el: '#app'
-});
+})
