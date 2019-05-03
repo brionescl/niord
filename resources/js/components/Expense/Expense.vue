@@ -36,6 +36,7 @@
             @addExpenseItem="addExpenseItem"
             @updateExpenseItem="updateExpenseItem"
             @deleteExpenseItem="deleteExpenseItem"
+            @cancelEditExpense="cancelEditExpense"
         >
         </expense-form>
     </div>
@@ -48,13 +49,8 @@
                 categories: [],
                 currencies: [],
                 expenses: [],
-                expense: {
-                    user_id: null,
-                    category_id: null,
-                    currency_id: null,
-                    description: '',
-                    amount: 0
-                },
+                expense: {},
+                beforeEditCacheExpense: {},
                 isLoadingExpenses: true,
                 expenseFormEditMode: false
             }
@@ -82,22 +78,40 @@
             newExpense() {
                 this.expense = {
                     category_id: this.categories[0].id,
-                    currency_id: this.currencies[0].id
+                    currency_id: this.currencies[0].id,
+                    description: '',
+                    amount: 0
                 }
                 this.expenseFormEditMode = false
                 this.showExpenseForm()
             },
             editExpense(expense) {
                 this.expense = expense
+                this.beforeEditCacheExpense = JSON.parse(JSON.stringify(expense))
                 this.expenseFormEditMode = true
                 this.showExpenseForm()
+            },
+            findIndexExpense(expense) {
+                return this.expenses.findIndex(e => e.id === expense.id)
+            },
+            cancelEditExpense(expense) {
+                if (this.expenseFormEditMode) {
+                    const index = this.findIndexExpense(expense)
+
+                    if (index != -1) {
+                        this.expenses[index] = this.beforeEditCacheExpense
+                        this.expense = {}
+                        this.beforeEditCacheExpense = {}
+                        this.hideExpenseForm()
+                    }
+                }
             },
             addExpenseItem(expense) {
                 this.expenses.push(expense)
                 this.hideExpenseForm()
             },
             updateExpenseItem(expense) {
-                const index = this.expenses.findIndex(e => e.id === expense.id)
+                const index = this.findIndexExpense(expense)
 
                 if (index != -1) {
                     this.expenses[index] = expense
@@ -105,7 +119,7 @@
                 }
             },
             deleteExpenseItem(expense) {
-                const index = this.expenses.findIndex(e => e.id === expense.id)
+                const index = this.findIndexExpense(expense)
 
                 if (index != -1) {
                     this.expenses.splice(index, 1)

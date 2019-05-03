@@ -8,7 +8,7 @@
                             <span v-if="editMode">Edit Expense</span>
                             <span v-else>New Expense</span>
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" aria-label="Close" v-on:click="cancelEditExpense">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -202,6 +202,9 @@ export default {
             } else {
                 self.isDeleting = false
             }
+        },
+        cancelEditExpense() {
+            this.$emit('cancelEditExpense', this.expense)
         }
     }
 }
