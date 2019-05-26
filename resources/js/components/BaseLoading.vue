@@ -1,5 +1,5 @@
 <template>
-    <div class="container text-center">
+    <div class="container text-center mt-3">
         <div class="row">
             <div class="col">
                 <div class="spinner-border text-primary" role="status">
