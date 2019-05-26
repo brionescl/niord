@@ -1,7 +1,7 @@
 <template>
-    <div class="modal fade" tabindex="-1" role="dialog">
-        <form v-on:submit.prevent="handleSubmit">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" data-backdrop="static" data-keyboard="false">
+        <form v-on:submit.prevent="submitForm">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">
@@ -31,7 +31,12 @@
                         <div class="form-row">
                             <div class="form-group col-4">
                                 <label for="currency_id" class="sr-only">Currency</label>
-                                <select id="currency_id" name="currency_id" class="form-control" v-model="expense.currency_id">
+                                <select
+                                    id="currency_id"
+                                    name="currency_id"
+                                    class="form-control"
+                                    v-model="expense.currency_id"
+                                >
                                     <option
                                         v-for="currency in currencies"
                                         :key="currency.id"
@@ -51,8 +56,9 @@
                                     <input
                                         id="amount"
                                         name="amount"
-                                        type="text"
                                         class="form-control"
+                                        :type="typeAmount"
+                                        :pattern="patternAmount"
                                         :placeholder="currencyPlaceholder"
                                         v-model="expense.amount"
                                     >
@@ -68,7 +74,7 @@
                                     class="form-control"
                                     rows="3"
                                     placeholder="Description"
-                                    v-model="expense.description"
+                                    v-model.trim="expense.description"
                                 >
                                 </textarea>
                             </div>
@@ -126,13 +132,23 @@ export default {
             }
 
             return 0
+        },
+        typeAmount() {
+            return this.currencyCode == 'CLP' ? 'text' : 'number'
+        },
+        patternAmount() {
+            return this.currencyCode == 'CLP' ? '\\d*' : ''
         }
     },
     methods: {
         currencySelected() {
             return this.currencies.find(currency => currency.id === this.expense.currency_id)
         },
-        handleSubmit() {
+        submitForm() {
+            if (!this.checkForm()) {
+                return
+            }
+
             const params = {
                 category_id: this.expense.category_id,
                 currency_id: this.expense.currency_id,
@@ -149,6 +165,14 @@ export default {
 
             this.postExpense(params)
             return
+        },
+        checkForm() {
+            if (!this.expense.amount) {
+                this.$snotify.error('Amount is required');
+                return false
+            }
+
+            return true
         },
         putExpense(params) {
             const self = this
