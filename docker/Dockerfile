@@ -4,7 +4,7 @@ ENV PHP_IDE_CONFIG="serverName=localhost"
 RUN a2enmod rewrite
 
 # Install developer dependencies
-RUN apt-get update -yqq && apt-get install -y git libsqlite3-dev vim libxml2-dev libicu-dev libfreetype6-dev libmcrypt-dev libjpeg62-turbo-dev libpng-dev libcurl4-gnutls-dev libbz2-dev libssl-dev -yqq
+RUN apt-get update -yqq && apt-get install -y git libsqlite3-dev vim libxml2-dev libicu-dev libfreetype6-dev libmcrypt-dev libjpeg62-turbo-dev libpng-dev libcurl4-gnutls-dev libbz2-dev libssl-dev unzip -yqq
 
 # Install xdebug for development
 RUN    pecl install xdebug \
