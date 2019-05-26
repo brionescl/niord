@@ -1,23 +1,24 @@
 <template>
     <div class="container-fluid">
-        <div class="row sticky-top">
-            <div class="col">
-                <h4 class="mt-2 mb-2">Expenses</h4>
-            </div>
-        </div>
+        <ExpenseCurrencyFilter
+            v-show="!isLoadingExpenses"
+            :expenses="expenses"
+            :currencies="currencies"
+            :defaultCurrency="defaultCurrency"
+            @updateDefaultCurrency="updateDefaultCurrency"
+        />
         <div class="row">
             <div class="col">
-                <base-loading v-show="isLoadingExpenses"></base-loading>
-                <expense-item
+                <BaseLoading v-show="isLoadingExpenses" />
+                <ExpenseItem
                     v-show="!isLoadingExpenses"
-                    v-for="expense in expenses"
+                    v-for="expense in filteredExpenses"
                     :key="expense.id"
                     :expense="expense"
                     :categories="categories"
                     :currencies="currencies"
                     @editExpense="editExpense"
-                >
-                </expense-item>
+                />
             </div>
         </div>
         <div id="newExpenseButton" v-show="!isLoadingExpenses">
@@ -27,7 +28,7 @@
                 </svg>
             </button>
         </div>
-        <expense-form
+        <ExpenseForm
             ref="expenseForm"
             :expense="expense"
             :categories="categories"
@@ -37,25 +38,35 @@
             @updateExpenseItem="updateExpenseItem"
             @deleteExpenseItem="deleteExpenseItem"
             @cancelEditExpense="cancelEditExpense"
-        >
-        </expense-form>
+        />
     </div>
 </template>
 
 <script>
+    import ExpenseForm from './ExpenseForm'
+    import ExpenseItem from './ExpenseItem'
+    import ExpenseCurrencyFilter from './ExpenseCurrencyFilter'
+
     export default {
+        components: {
+            ExpenseForm,
+            ExpenseItem,
+            ExpenseCurrencyFilter
+        },
         data() {
             return {
                 categories: [],
+                defaultCategory: {},
                 currencies: [],
+                defaultCurrency: {},
                 expenses: [],
                 expense: {},
-                beforeEditCacheExpense: {},
+                cachedExpense: {},
                 isLoadingExpenses: true,
                 expenseFormEditMode: false
             }
         },
-        mounted() {
+        created() {
             const self = this
             Promise.all([
                 axios.get('/categories'),
@@ -63,10 +74,25 @@
                 axios.get('/expenses')
             ]).then(function ([categories, currencies, expenses]) {
                 self.categories = categories.data
+                self.defaultCategory = JSON.parse(JSON.stringify(self.categories[0]))
+
                 self.currencies = currencies.data
+                self.defaultCurrency = JSON.parse(JSON.stringify(self.currencies[0]))
+
                 self.expenses = expenses.data
                 self.isLoadingExpenses = false
             })
+        },
+        computed: {
+            filteredExpenses() {
+                return this.expenses.filter((expense) => {
+                    if (expense.currency_id == this.defaultCurrency.id) {
+                        return true
+                    }
+
+                    return false
+                })
+            }
         },
         methods: {
             showExpenseForm() {
@@ -77,17 +103,15 @@
             },
             newExpense() {
                 this.expense = {
-                    category_id: this.categories[0].id,
-                    currency_id: this.currencies[0].id,
-                    description: '',
-                    amount: 0
+                    category_id: this.defaultCategory.id,
+                    currency_id: this.defaultCurrency.id
                 }
                 this.expenseFormEditMode = false
                 this.showExpenseForm()
             },
             editExpense(expense) {
                 this.expense = expense
-                this.beforeEditCacheExpense = JSON.parse(JSON.stringify(expense))
+                this.cachedExpense = JSON.parse(JSON.stringify(expense))
                 this.expenseFormEditMode = true
                 this.showExpenseForm()
             },
@@ -99,12 +123,13 @@
                     const index = this.findIndexExpense(expense)
 
                     if (index != -1) {
-                        this.expenses[index] = this.beforeEditCacheExpense
+                        Vue.set(this.expenses, index, this.cachedExpense)
                         this.expense = {}
-                        this.beforeEditCacheExpense = {}
-                        this.hideExpenseForm()
+                        this.cachedExpense = {}
                     }
                 }
+
+                this.hideExpenseForm()
             },
             addExpenseItem(expense) {
                 this.expenses.push(expense)
@@ -114,7 +139,7 @@
                 const index = this.findIndexExpense(expense)
 
                 if (index != -1) {
-                    this.expenses[index] = expense
+                    Vue.set(this.expenses, index, expense)
                     this.hideExpenseForm()
                 }
             },
@@ -125,16 +150,19 @@
                     this.expenses.splice(index, 1)
                     this.hideExpenseForm()
                 }
+            },
+            findIndexCurrency(currencyId) {
+                return this.currencies.findIndex(e => e.id === currencyId)
+            },
+            updateDefaultCurrency(currency) {
+                const index = this.findIndexCurrency(currency)
+                this.defaultCurrency = JSON.parse(JSON.stringify(this.currencies[index]))
             }
         }
     }
 </script>
 
 <style>
-    .sticky-top {
-        background-color: #f8fafc;
-        top: 3.5em;
-    }
     #newExpenseButton {
         position: fixed;
         bottom: 10px;

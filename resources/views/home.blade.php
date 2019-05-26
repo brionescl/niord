@@ -2,5 +2,5 @@
 
 @section('content')
     <vue-snotify></vue-snotify>
-    <expense></expense>
+    <Expense />
 @endsection

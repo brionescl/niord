@@ -1,58 +1,23 @@
-
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
 require('./bootstrap')
 
 window.Vue = require('vue')
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-const files = require.context('./', true, /\.vue$/i)
-files.keys().map(
-    key => Vue.component(
-        key.split('/').pop().split('.')[0], files(key).default
-    )
-)
-
-import moment from 'moment'
 import snotify from 'vue-snotify'
+
+import BaseLoading from './components/BaseLoading'
+import Expense from './components/Expense/Expense'
+import { formatCurrency, formatDate } from './filters/format'
 
 Vue.use(snotify)
 
-Vue.filter('formatDate', function(value, format) {
-    if (value) {
-        return moment(String(value)).format(format)
-    }
-})
+Vue.filter('formatCurrency', formatCurrency)
+Vue.filter('formatDate', formatDate)
 
-Vue.filter('formatCurrency', function(number, options) {
-    if (number && options) {
-        return Intl.NumberFormat(
-            options.locale,
-            {
-                style: 'currency',
-                currency: options.code
-            }
-        ).format(number)
-    }
-})
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+Vue.component('BaseLoading', BaseLoading)
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    components: {
+        Expense
+    }
 })
