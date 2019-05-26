@@ -21,7 +21,7 @@ class CreateExpensesTable extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
             $table->unsignedBigInteger('currency_id');
             $table->foreign('currency_id')->references('id')->on('currencies');
-            $table->string('description', 255);
+            $table->string('description', 255)->nullable();
             $table->double('amount');
             $table->timestamps();
         });
