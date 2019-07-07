@@ -36,4 +36,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function banks()
+    {
+        return $this
+            ->belongsToMany('App\Bank', 'bank_user')
+            ->withPivot('user', 'password', 'current_account_number');
+    }
 }
