@@ -23,6 +23,8 @@ Auth::routes([
 
 Route::get('home', 'HomeController@index')->name('home');
 
+Route::get('current-account/sync', 'CurrentAccountController@sync');
+
 Route::apiResource('expenses', 'ExpenseController');
 Route::apiResource('categories', 'CategoryController');
 Route::apiResource('currencies', 'CurrencyController');
